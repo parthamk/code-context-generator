@@ -1,71 +1,181 @@
-# code-context-generator README
+# Code Context Generator
 
-This is the README for your extension "code-context-generator". After writing up a brief description, we recommend including the following sections.
+A Visual Studio Code extension that reads your local project structure and generates a single `codecontext.txt` file containing the visual folder hierarchy and the raw text contents of your files.
+
+This tool is designed to quickly bundle codebase context so it can be passed into Large Language Models (LLMs) or local AI assistants without the need to manually copy and paste multiple files.
+
+## Table of Contents
+- [Features](#features)
+- [Example Output](#example-output)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Ignore Rules](#ignore-rules)
+- [Contributing](#contributing)
+- [License](#license)
+- [Author](#author)
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+* **Visual Folder Tree:** Generates an ASCII-style directory structure at the top of the text file.
+* **Targeted Generation:** Run the command on an entire workspace, or right-click a specific subfolder to generate context exclusively for that directory.
+* **Smart Filtering:** Bypasses heavy dependency directories (`node_modules`, `.git`) and build folders (`dist`, `out`).
+* **Binary Exclusion:** Automatically skips non-text files (images, PDFs, ZIPs) to keep the text output clean.
+* **.gitignore Support:** Reads your workspace `.gitignore` file and applies those rules to the generation process.
 
-For example if there is an image subfolder under your extension project workspace:
+## Example Output
 
-\!\[feature X\]\(images/feature-x.png\)
+The generated `codecontext.txt` file will look like this:
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+```text
+simplehtml/
+|
+-index.html
+|
+-script.js
+|
+-style.css
 
-## Requirements
+simplehtml/index.html:
+---------------------
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Animated Countdown</title>
+  </head>
+  <body>
+    <div class="counter">
+      <div class="nums">
+        <span class="in">3</span>
+        <span>2</span>
+        <span>1</span>
+        <span>0</span>
+      </div>
+      <h4>Get Ready</h4>
+    </div>
+  </body>
+</html>
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+simplehtml/script.js:
+--------------------
+const nums = document.querySelectorAll('.nums span')
+const counter = document.querySelector('.counter')
 
-## Extension Settings
+function resetDOM() {
+  counter.classList.remove('hide')
+  nums.forEach((num) => {
+    num.classList.value = ''
+  })
+  nums[0].classList.add('in')
+}
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+```
 
-For example:
+## Installation
 
-This extension contributes the following settings:
+### Method 1: Install from VSIX (Manual)
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+1.  Download the latest `.vsix` file from the [Releases](https://www.google.com/search?q=https://github.com/parthamk/code-context-generator/releases) page.
+    
+2.  Open VS Code.
+    
+3.  Open the Extensions view (`Ctrl+Shift+X` or `Cmd+Shift+X`).
+    
+4.  Click the `...` menu at the top right of the Extensions panel.
+    
+5.  Select `Install from VSIX...` and choose the downloaded file.
+    
 
-## Known Issues
+### Method 2: Build from Source
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+If you want to modify the extension or run it locally:
 
-## Release Notes
+1.  Clone the repository:
+    
+    Bash
+    
+    ```
+    git clone [https://github.com/parthamk/code-context-generator.git](https://github.com/parthamk/code-context-generator.git)
+    
+    ```
+    
+2.  Navigate to the project directory and install dependencies:
+    
+    Bash
+    
+    ```
+    cd code-context-generator
+    npm install
+    
+    ```
+    
+3.  Open the folder in VS Code.
+    
+4.  Press `F5` to open a new VS Code window with the extension loaded in debug mode.
+    
 
-Users appreciate release notes as you update your extension.
+## Usage
 
-### 1.0.0
+**Right-Click Menu (Context Menu)**
 
-Initial release of ...
+1.  Open the File Explorer in VS Code.
+    
+2.  Right-click on any folder you want to analyze.
+    
+3.  Select `Generate Code Context`.
+    
+4.  The `codecontext.txt` file will be created inside that specific folder.
+    
 
-### 1.0.1
+**Command Palette**
 
-Fixed issue #.
+1.  Open the Command Palette (`Ctrl+Shift+P` on Windows/Linux, `Cmd+Shift+P` on macOS).
+    
+2.  Type `Generate Code Context` and press Enter.
+    
+3.  The `codecontext.txt` file will be created in the root of your current workspace.
+    
 
-### 1.1.0
+## Ignore Rules
 
-Added features X, Y, and Z.
+To prevent sensitive data or massive files from crashing the context generation, the extension uses a hardcoded base ignore list alongside your `.gitignore` rules.
 
----
+The base ignore list includes:
 
-## Following extension guidelines
+-   `.git`, `node_modules`, `.vscode`
+    
+-   `dist`, `out`
+    
+-   `codecontext.txt`
+    
+-   `.env`, `.env.local`, `.env.development`, `.env.production`
+    
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+If you need to ignore additional files, add them to your project's `.gitignore` file.
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+## Contributing
 
-## Working with Markdown
+Contributions, issues, and feature requests are welcome.
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+1.  Fork the project.
+    
+2.  Create your feature branch (`git checkout -b feature/NewFeature`).
+    
+3.  Commit your changes (`git commit -m 'Add some NewFeature'`).
+    
+4.  Push to the branch (`git push origin feature/NewFeature`).
+    
+5.  Open a Pull Request.
+    
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+## License
 
-## For more information
+This project is licensed under the GNU General Public License. See the LICENSE file for details.
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+## Author
 
-**Enjoy!**
+**Partha**
+
+-   Website: [codeweez.in](https://codeweez.in/)

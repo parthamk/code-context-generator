@@ -5,7 +5,10 @@
   "version": "0.0.1",
   "icon": "images/icon.png",
   "publisher": "parthamk",
-
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/parthamk/code-context-generator"
+  },
   "engines": {
     "vscode": "^1.109.0"
   },
