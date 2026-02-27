@@ -24,7 +24,10 @@ export function activate(context: vscode.ExtensionContext) {
         const targetFolderName = path.basename(targetPath);
         
         // 1. Your expanded base ignore list
-        const baseIgnoreList = ['.git', 'node_modules', '.vscode', 'codecontext.txt', 'dist', 'out', '.env', '.env.local', '.env.development', '.env.production'];
+        const baseIgnoreList = [
+            '.git', 'node_modules','node_modules/', '.vscode', 'codecontext.txt', 'dist', 'out', '.env', '.env.local', '.env.development', '.env.production',
+            'package.json', 'package-lock.json', 'pnpm-lock.yaml', 'yarn.lock', '.npmrc', 'npm-debug.log'
+        ];
         
         // 2. Read .gitignore rules from the root workspace
         const gitignoreRules = getGitignoreRules(rootWorkspacePath);
@@ -72,6 +75,11 @@ function getGitignoreRules(dirPath: string): string[] {
 }
 
 function shouldIgnore(itemName: string, ignoreList: string[]): boolean {
+    // Always ignore node_modules regardless of location
+    if (itemName === 'node_modules') {
+        return true;
+    }
+    
     for (const rule of ignoreList) {
         if (rule === itemName) { return true; }
         if (rule.startsWith('*.') && itemName.endsWith(rule.slice(1))) { return true; }
